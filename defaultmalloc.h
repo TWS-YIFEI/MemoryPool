@@ -13,7 +13,7 @@ public:
     static void * reallocate(void *p,size_t old_sz,size_t new_sz);
     static void (*set_malloc_handler(void (*f)()))();
 private:
-    static void *oom_malloc(size_t);
+    static void *oom_malloc(size_t n);
     static void *oom_realloc(void *p,size_t n);
     static void (* __malloc_alloc_oom_handler)();
 };
