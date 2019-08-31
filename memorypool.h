@@ -13,7 +13,7 @@ enum{__NUM_FREELISTS=16};
 
 class MemoryPool{
 public:
-    MemoryPool();
+    MemoryPool(){};
     MemoryPool(size_t n);
     static void * allocate(size_t n);
     static void deallocate(void *p,size_t n);
@@ -39,7 +39,13 @@ private:
     static size_t heap_size; //内存池申请到的总空间大小，包括被free_list串起来的。
 };
 
-MemoryPool::MemoryPool(){
+MemoryPool::obj * volatile MemoryPool::free_list[__NUM_FREELISTS]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+char* MemoryPool::start_free=0;
+char* MemoryPool::end_free=0;
+size_t MemoryPool::heap_size=0;
+
+/*
+MemoryPool::initMemoryPool(){
     for(int i=0;i<16;i++){
         free_list[i]=nullptr;
     }
@@ -47,6 +53,7 @@ MemoryPool::MemoryPool(){
     end_free=0;
     heap_size=0;
 }
+*/
 
 MemoryPool::MemoryPool(size_t n){
     start_free=(char*)DefaultMalloc::allocate(n);
@@ -57,7 +64,7 @@ MemoryPool::MemoryPool(size_t n){
 void * MemoryPool::allocate(size_t n){
     obj * volatile * my_free_list;
     obj * result;
-    if(n > (size_t)__MAX_BYTES){
+    if(n > (size_t)__MAX_BYTES || n<=0){
         return (DefaultMalloc::allocate(n));
     }
     my_free_list=free_list+FREELIST_INDEX(n);
@@ -73,7 +80,7 @@ void * MemoryPool::allocate(size_t n){
 void MemoryPool::deallocate(void *p,size_t n){
     obj * volatile * my_free_list;
     obj *q=(obj*)p;
-    if(n > (size_t)__MAX_BYTES){
+    if(n > (size_t)__MAX_BYTES || n<=0){
         DefaultMalloc::deallocate(p,n);
         return ;
     }
@@ -85,7 +92,7 @@ void MemoryPool::deallocate(void *p,size_t n){
 void * MemoryPool::reallocate(void *p,size_t old_sz,size_t new_sz){
     void * result;
     size_t copy_size;
-    if(old_sz > (size_t)__MAX_BYTES){
+    if(old_sz > (size_t)__MAX_BYTES || new_sz<=0 || old_sz<=0){
         return (DefaultMalloc::reallocate(p,old_sz,new_sz));
     }
     if(ROUND_UP(old_sz) == ROUND_UP(new_sz)) return p;

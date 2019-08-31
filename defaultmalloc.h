@@ -18,6 +18,8 @@ private:
     static void (* __malloc_alloc_oom_handler)();
 };
 
+void (*DefaultMalloc::__malloc_alloc_oom_handler)()=0;
+
 void * DefaultMalloc::allocate(size_t n){
     void *result=malloc(n);
     if(result==0) result=oom_malloc(n);
