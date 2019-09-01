@@ -4,7 +4,7 @@
 #include <ctime>
 #include "memorypool.h"
 using namespace std;
-#define USEPOOL
+//#define USEPOOL
 
 int main(){
     MemoryPool pool(10); //1Mb
@@ -26,7 +26,7 @@ int main(){
         end=clock();
         sum+=(end-start);
     }
-    cout<<"MemoryPool:20000次申请释放内存(0-128bytes)用时:"<<sum/20<<"毫秒"<<endl;
+    cout<<"MemoryPool:20000次申请释放内存(0-128bytes)用时:"<<sum/80<<"毫秒"<<endl;
 #else
     sum=0;
     for(int i=0;i<80;i++){
@@ -38,7 +38,7 @@ int main(){
         end=clock();
         sum+=(end-start);
     }
-        cout<<"原生api:20000次申请释放内存(0-128bytes)用时:"<<sum/20<<"毫秒"<<endl;
+        cout<<"原生api:20000次申请释放内存(0-128bytes)用时:"<<sum/80<<"毫秒"<<endl;
 
 #endif
 
